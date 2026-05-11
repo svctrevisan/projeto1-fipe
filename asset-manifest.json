@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/svctrevisan/projeto1-fipe/static/css/main.55d9fc8a.css",
-    "main.js": "/svctrevisan/projeto1-fipe/static/js/main.414d839f.js",
-    "index.html": "/svctrevisan/projeto1-fipe/index.html",
-    "main.55d9fc8a.css.map": "/svctrevisan/projeto1-fipe/static/css/main.55d9fc8a.css.map",
-    "main.414d839f.js.map": "/svctrevisan/projeto1-fipe/static/js/main.414d839f.js.map"
+    "main.css": "/projeto1-fipe/static/css/main.55d9fc8a.css",
+    "main.js": "/projeto1-fipe/static/js/main.414d839f.js",
+    "index.html": "/projeto1-fipe/index.html",
+    "main.55d9fc8a.css.map": "/projeto1-fipe/static/css/main.55d9fc8a.css.map",
+    "main.414d839f.js.map": "/projeto1-fipe/static/js/main.414d839f.js.map"
   },
   "entrypoints": [
     "static/css/main.55d9fc8a.css",
