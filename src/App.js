@@ -1,10 +1,15 @@
-import FormBuscar from "./components/FormBusca";
+import { FipeProvider } from "./contexts/FipeContext";
+import Footer from "./components/Footer";
+import Body from "./components/Body";
+import Header from "./components/Header";
 
 function App() {
   return (
-    <div>
-      <FormBuscar />
-    </div>
+    <FipeProvider>
+      <Header />
+      <Body />
+      <Footer />
+    </FipeProvider>
   );
 }
 

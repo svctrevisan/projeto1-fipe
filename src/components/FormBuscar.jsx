@@ -1,33 +1,10 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState, useReducer } from "react";
-
-const estadoZero = {
-    marcas: [],
-    modelos: [],
-    anos: [],
-    resultado: null,
-};
-
-function reducer(state,action) {
-    switch (action.type) {
-        case "SET_MARCAS":
-            return {...state, marcas: action.payload };
-        case "SET_MODELOS":
-            return {...state, modelos: action.payload};
-        case "SET_ANOS":
-            return {...state, anos: action.payload};
-        case "SET_RESULTADO":
-            return {...state, resultado: action.payload};
-        case "RESET":
-            return {...state, modelos: [], anos: [], resultado: null};
-        default:
-            return state;
-    }
-}
+import { useEffect, useContext, useReducer } from "react";
+import { FipeContext } from "../contexts/FipeContext";
 
 function FormBuscar() {
     const {register, handleSubmit, watch} = useForm();
-    const [state, dispatch] = useReducer(reducer, estadoZero);
+    const {state, dispatch} = useContext(FipeContext);
 
     useEffect(() => {
         fetch("https://parallelum.com.br/fipe/api/v1/carros/marcas")
@@ -70,7 +47,6 @@ function FormBuscar() {
 
     return (
         <div>
-            <h2>Consulta FIPE</h2>
             <form onSubmit={handleSubmit(mostrarDados)}>
                 <select {...register("marca", { onChange: (e) => {buscarModelos(e)} })}>
                     <option value="">Selecione a marca do veículo</option>
@@ -101,19 +77,6 @@ function FormBuscar() {
 
                 <button type="submit">Buscar</button>
             </form>
-
-            {state.resultado && (
-                <div>
-                    <h3>Resultados Tabela FIPE</h3>
-                    <p>Marca: {state.resultado.Marca}</p>
-                    <p>Modelo: {state.resultado.Modelo}</p>
-                    <p>Ano: {state.resultado.AnoModelo}</p>
-                    <p>Combustível: {state.resultado.Combustivel}</p>
-                    <p>Mês de Referência: {state.resultado.MesReferencia}</p>
-                    <p>Valor: {state.resultado.Valor}</p>
-                </div>
-            )}
-
         </div>
     );
 }
