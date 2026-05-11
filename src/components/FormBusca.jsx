@@ -1,18 +1,40 @@
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
+
+const estadoZero = {
+    marcas: [],
+    modelos: [],
+    anos: [],
+    resultado: null,
+};
+
+function reducer(state,action) {
+    switch (action.type) {
+        case "SET_MARCAS":
+            return {...state, marcas: action.payload };
+        case "SET_MODELOS":
+            return {...state, modelos: action.payload};
+        case "SET_ANOS":
+            return {...state, anos: action.payload};
+        case "SET_RESULTADO":
+            return {...state, resultado: action.payload};
+        case "RESET":
+            return {...state, modelos: [], anos: [], resultado: null};
+        default:
+            return state;
+    }
+}
 
 function FormBuscar() {
     const {register, handleSubmit, watch} = useForm();
-    const [marcas, setMarcas] = useState([]);
-    const marcaSelect = watch("marca");
-    const [modelos, setModelos] = useState([]);
-    const [anos, setAnos] = useState([]);
-    const [resultado, setResultado] = useState(null)
+    const [state, dispatch] = useReducer(reducer, estadoZero);
 
     useEffect(() => {
         fetch("https://parallelum.com.br/fipe/api/v1/carros/marcas")
         .then(resp => resp.json())
-        .then((marcasObtidas) => { setMarcas(marcasObtidas); })
+        .then((marcasObtidas) => { 
+            dispatch({type:"SET_MARCAS", payload:marcasObtidas})
+        })
         .catch(err => console.error("Erro ao buscar marcas", err))
     }, []);
 
@@ -21,23 +43,29 @@ function FormBuscar() {
 
         fetch(`https://parallelum.com.br/fipe/api/v1/carros/marcas/${codigoMarca}/modelos`)
         .then(resp => resp.json())
-        .then((modelosObtidos) => { setModelos(modelosObtidos.modelos)})
+        .then((modelosObtidos) => { 
+            dispatch({type: "SET_MODELOS", payload: modelosObtidos.modelos})
+        })
     }
 
     function buscarAnos(event) {
         const codigoModelo = event.target.value;
-        const codigoMarca = marcaSelect;
+        const codigoMarca = watch("marca");
 
         fetch(`https://parallelum.com.br/fipe/api/v1/carros/marcas/${codigoMarca}/modelos/${codigoModelo}/anos`)
         .then(resp => resp.json())
-        .then((anosObtidos) => { setAnos(anosObtidos)})
+        .then((anosObtidos) => {
+            dispatch({type:"SET_ANOS", payload: anosObtidos})
+        })
     }
 
     function mostrarDados(formData) {
 
         fetch(`https://parallelum.com.br/fipe/api/v1/carros/marcas/${formData.marca}/modelos/${formData.modelo}/anos/${formData.ano}`)
         .then(resp => resp.json())
-        .then((valoresObtidos) => {setResultado(valoresObtidos)})
+        .then((valoresObtidos) => {
+            dispatch({type:"SET_RESULTADO", payload:valoresObtidos})
+        })
     }
 
     return (
@@ -46,7 +74,7 @@ function FormBuscar() {
             <form onSubmit={handleSubmit(mostrarDados)}>
                 <select {...register("marca", { onChange: (e) => {buscarModelos(e)} })}>
                     <option value="">Selecione a marca do veículo</option>
-                    {marcas.map((marca) => (
+                    {state.marcas.map((marca) => (
                         <option key={marca.codigo} value={marca.codigo}>
                             {marca.nome}
                         </option>
@@ -55,7 +83,7 @@ function FormBuscar() {
 
                 <select {...register("modelo", { onChange: (e) => {buscarAnos(e)} })}> 
                     <option value="">Selecione o modelo</option>
-                    {modelos.map((modelo) => (
+                    {state.modelos.map((modelo) => (
                         <option key={modelo.codigo} value={modelo.codigo}>
                             {modelo.nome}
                         </option>
@@ -64,7 +92,7 @@ function FormBuscar() {
 
                 <select {...register("ano")}>
                     <option value="">Selecione o Ano</option>
-                    {anos.map((ano) => (
+                    {state.anos.map((ano) => (
                         <option key={ano.codigo} value={ano.codigo}>
                             {ano.nome}
                         </option>
@@ -74,15 +102,15 @@ function FormBuscar() {
                 <button type="submit">Buscar</button>
             </form>
 
-            {resultado && (
+            {state.resultado && (
                 <div>
                     <h3>Resultados Tabela FIPE</h3>
-                    <p>Marca: {resultado.Marca}</p>
-                    <p>Modelo: {resultado.Modelo}</p>
-                    <p>Ano: {resultado.AnoModelo}</p>
-                    <p>Combustível: {resultado.Combustivel}</p>
-                    <p>Mês de Referência: {resultado.MesReferencia}</p>
-                    <p>Valor: {resultado.Valor}</p>
+                    <p>Marca: {state.resultado.Marca}</p>
+                    <p>Modelo: {state.resultado.Modelo}</p>
+                    <p>Ano: {state.resultado.AnoModelo}</p>
+                    <p>Combustível: {state.resultado.Combustivel}</p>
+                    <p>Mês de Referência: {state.resultado.MesReferencia}</p>
+                    <p>Valor: {state.resultado.Valor}</p>
                 </div>
             )}
 
