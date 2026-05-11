@@ -2,9 +2,12 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 
 function FormBuscar() {
-    const {register, handleSubmit} = useForm();
+    const {register, handleSubmit, watch} = useForm();
     const [marcas, setMarcas] = useState([]);
+    const marcaSelect = watch("marca");
     const [modelos, setModelos] = useState([]);
+    const [anos, setAnos] = useState([]);
+    const [resultado, setResultado] = useState(null)
 
     useEffect(() => {
         fetch("https://parallelum.com.br/fipe/api/v1/carros/marcas")
@@ -21,15 +24,27 @@ function FormBuscar() {
         .then((modelosObtidos) => { setModelos(modelosObtidos.modelos)})
     }
 
-    function mostrarDados(data) {
-        console.log(data);
+    function buscarAnos(event) {
+        const codigoModelo = event.target.value;
+        const codigoMarca = marcaSelect;
+
+        fetch(`https://parallelum.com.br/fipe/api/v1/carros/marcas/${codigoMarca}/modelos/${codigoModelo}/anos`)
+        .then(resp => resp.json())
+        .then((anosObtidos) => { setAnos(anosObtidos)})
+    }
+
+    function mostrarDados(formData) {
+
+        fetch(`https://parallelum.com.br/fipe/api/v1/carros/marcas/${formData.marca}/modelos/${formData.modelo}/anos/${formData.ano}`)
+        .then(resp => resp.json())
+        .then((valoresObtidos) => {setResultado(valoresObtidos)})
     }
 
     return (
         <div>
             <h2>Consulta FIPE</h2>
             <form onSubmit={handleSubmit(mostrarDados)}>
-                <select {...register("marca")} onChange={buscarModelos}>
+                <select {...register("marca", { onChange: (e) => {buscarModelos(e)} })}>
                     <option value="">Selecione a marca do veículo</option>
                     {marcas.map((marca) => (
                         <option key={marca.codigo} value={marca.codigo}>
@@ -38,7 +53,7 @@ function FormBuscar() {
                     ))} 
                 </select>
 
-                <select {...register("modelo")}>
+                <select {...register("modelo", { onChange: (e) => {buscarAnos(e)} })}> 
                     <option value="">Selecione o modelo</option>
                     {modelos.map((modelo) => (
                         <option key={modelo.codigo} value={modelo.codigo}>
@@ -47,8 +62,30 @@ function FormBuscar() {
                     ))}
                 </select>
 
+                <select {...register("ano")}>
+                    <option value="">Selecione o Ano</option>
+                    {anos.map((ano) => (
+                        <option key={ano.codigo} value={ano.codigo}>
+                            {ano.nome}
+                        </option>
+                    ))}
+                </select>
+
                 <button type="submit">Buscar</button>
             </form>
+
+            {resultado && (
+                <div>
+                    <h3>Resultados Tabela FIPE</h3>
+                    <p>Marca: {resultado.Marca}</p>
+                    <p>Modelo: {resultado.Modelo}</p>
+                    <p>Ano: {resultado.AnoModelo}</p>
+                    <p>Combustível: {resultado.Combustivel}</p>
+                    <p>Mês de Referência: {resultado.MesReferencia}</p>
+                    <p>Valor: {resultado.Valor}</p>
+                </div>
+            )}
+
         </div>
     );
 }
