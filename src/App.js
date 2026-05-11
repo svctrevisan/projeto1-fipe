@@ -1,9 +1,9 @@
-import FormMarcas from "./components/FormBusca";
+import FormBuscar from "./components/FormBusca";
 
 function App() {
   return (
     <div>
-      <FormMarcas />
+      <FormBuscar />
     </div>
   );
 }
