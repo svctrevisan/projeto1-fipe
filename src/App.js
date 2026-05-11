@@ -1,7 +1,9 @@
+import FormMarcas from "./components/FormBusca";
+
 function App() {
   return (
     <div>
-      <h1>Projeto React</h1>
+      <FormMarcas />
     </div>
   );
 }
