@@ -7,14 +7,14 @@ function Resultado() {
     if(!state.resultado) return null;
 
     return(
-        <div>
+        <div className="resultado">
             <h3>Resultados Tabela FIPE</h3>
             <p>Marca: {state.resultado.Marca}</p>
             <p>Modelo: {state.resultado.Modelo}</p>
             <p>Ano: {state.resultado.AnoModelo}</p>
             <p>Combustível: {state.resultado.Combustivel}</p>
             <p>Mês de Referência: {state.resultado.MesReferencia}</p>
-            <p>Valor: {state.resultado.Valor}</p>
+            <p className="valor">Valor: {state.resultado.Valor}</p>
         </div>
     )
 }

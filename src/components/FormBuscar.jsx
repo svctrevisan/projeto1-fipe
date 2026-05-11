@@ -38,6 +38,11 @@ function FormBuscar() {
 
     function mostrarDados(formData) {
 
+        if (!formData.marca || !formData.modelo || !formData.ano) {
+            alert("Preencha todos os campos antes de buscar!");
+            return;
+        }
+
         fetch(`https://parallelum.com.br/fipe/api/v1/carros/marcas/${formData.marca}/modelos/${formData.modelo}/anos/${formData.ano}`)
         .then(resp => resp.json())
         .then((valoresObtidos) => {
@@ -48,32 +53,38 @@ function FormBuscar() {
     return (
         <div>
             <form onSubmit={handleSubmit(mostrarDados)}>
-                <select {...register("marca", { onChange: (e) => {buscarModelos(e)} })}>
-                    <option value="">Selecione a marca do veículo</option>
-                    {state.marcas.map((marca) => (
-                        <option key={marca.codigo} value={marca.codigo}>
-                            {marca.nome}
-                        </option>
-                    ))} 
-                </select>
+                <div>
+                    <select {...register("marca", { onChange: (e) => {buscarModelos(e)} })}>
+                        <option value="">Selecione a marca do veículo</option>
+                        {state.marcas.map((marca) => (
+                            <option key={marca.codigo} value={marca.codigo}>
+                                {marca.nome}
+                            </option>
+                        ))} 
+                    </select>
+                </div>
 
-                <select {...register("modelo", { onChange: (e) => {buscarAnos(e)} })}> 
-                    <option value="">Selecione o modelo</option>
-                    {state.modelos.map((modelo) => (
-                        <option key={modelo.codigo} value={modelo.codigo}>
-                            {modelo.nome}
-                        </option>
-                    ))}
-                </select>
+                <div>
+                    <select {...register("modelo", { onChange: (e) => {buscarAnos(e)} })}> 
+                        <option value="">Selecione o modelo</option>
+                        {state.modelos.map((modelo) => (
+                            <option key={modelo.codigo} value={modelo.codigo}>
+                                {modelo.nome}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
-                <select {...register("ano")}>
-                    <option value="">Selecione o Ano</option>
-                    {state.anos.map((ano) => (
-                        <option key={ano.codigo} value={ano.codigo}>
-                            {ano.nome}
-                        </option>
-                    ))}
-                </select>
+                <div>
+                    <select {...register("ano")}>
+                        <option value="">Selecione o Ano</option>
+                        {state.anos.map((ano) => (
+                            <option key={ano.codigo} value={ano.codigo}>
+                                {ano.nome}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
                 <button type="submit">Buscar</button>
             </form>
